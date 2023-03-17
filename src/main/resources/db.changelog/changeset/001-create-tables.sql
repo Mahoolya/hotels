@@ -1,11 +1,11 @@
 --liquibase formatted sql
 
---changeset marybokhan:create_hotels_tables
+--changeset marybokhan:create_hotel_tables
 
 create schema if not exists hotels_schema;
 set schema 'hotels_schema';
 
-create table users
+create table if not exists users
 (
     id bigserial,
 	role varchar(45) not null,
@@ -17,7 +17,7 @@ create table users
 	primary key (id)
 );
 
-create table hotels
+create table if not exists hotels
 (
     id bigserial,
     name varchar(45) not null,
@@ -31,7 +31,7 @@ create table hotels
 	primary key (id)
 );
 
-create table costs
+create table if not exists costs
 (
     id bigserial,
     hotel_id bigint not null,
@@ -41,7 +41,7 @@ create table costs
 	primary key (id)
 );
 
-create table bookings
+create table if not exists bookings
 (
     id bigserial,
     user_id bigint not null,
@@ -49,13 +49,13 @@ create table bookings
     price decimal,
     start_date date not null,
     end_date date not null,
-    isConfirmed boolean not null default false,
+    is_confirmed boolean not null default false,
     foreign key (cost_id) references costs (id) on update cascade on delete cascade,
     foreign key (user_id) references users (id) on update cascade on delete cascade,
 	primary key (id)
 );
 
-create table feedbacks
+create table if not exists feedbacks
 (
     id bigserial,
     user_id bigint not null,
