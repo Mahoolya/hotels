@@ -2,6 +2,7 @@ package com.app.hotels.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -35,11 +36,15 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Feedback> feedbacks = new HashSet<>();
 
-    public enum Role{
+    public enum Role implements GrantedAuthority {
 
         ROLE_ADMIN,
         ROLE_USER;
 
+        @Override
+        public String getAuthority() {
+            return this.name();
+        }
     }
 
 }
