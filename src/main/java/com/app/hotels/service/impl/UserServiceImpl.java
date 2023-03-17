@@ -2,6 +2,7 @@ package com.app.hotels.service.impl;
 
 import com.app.hotels.domain.User;
 import com.app.hotels.domain.exception.ResourceAlreadyExistsException;
+import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import com.app.hotels.repository.UserRepository;
 import com.app.hotels.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceDoesNotExistException("There are no user with email " + email));
     }
 
 }
