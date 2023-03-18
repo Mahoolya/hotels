@@ -4,7 +4,6 @@ import com.app.hotels.domain.Hotel;
 import com.app.hotels.domain.criteria.HotelCriteria;
 import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import com.app.hotels.repository.HotelRepository;
-import com.app.hotels.service.CostService;
 import com.app.hotels.service.HotelService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -25,7 +24,6 @@ public class HotelServiceImpl implements HotelService {
     private static final int PAGE_SIZE = 20;
 
     private final HotelRepository hotelRepository;
-    private final CostService costService;
 
     @PersistenceContext
     private EntityManager entityManager;
