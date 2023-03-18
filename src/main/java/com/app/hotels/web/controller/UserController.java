@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/hotels/{currentPage}")
-    public String getHotelsPage(Model model, @PathVariable int currentPage, @ModelAttribute("hotelCriteria") HotelCriteria hotelCriteria) {
+    public String getHotelsPage(Model model, @PathVariable(required = false) int currentPage, @ModelAttribute("hotelCriteria") HotelCriteria hotelCriteria) {
         List<Hotel> hotels = hotelService.findAll(hotelCriteria, currentPage);
         model.addAttribute("hotels", hotelMapper.toDto(hotels));
         List<String> cities = hotelService.findAllCities();

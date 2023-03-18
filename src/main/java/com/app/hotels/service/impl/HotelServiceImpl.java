@@ -31,6 +31,9 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public List<Hotel> findAll(HotelCriteria hotelCriteria, int currentPage) {
         List<Hotel> hotels;
+        if(currentPage == 0){
+            currentPage = 1;
+        }
         if(hotelCriteria !=null){
             hotels = findAllByCriteria(hotelCriteria, currentPage);
         } else {

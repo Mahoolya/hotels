@@ -40,6 +40,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
+                .formLogin()
+                .loginPage("/login.html")
+                .loginProcessingUrl("/api/v1/users/login")
+                .defaultSuccessUrl("/api/v1/users/hotels", true)
+                .and()
+                .logout()
+                .logoutUrl("/api/v1/users/login")
+                .and()
                 .build();
     }
 
