@@ -1,11 +1,15 @@
 package com.app.hotels.web.controller;
 
 import com.app.hotels.domain.Booking;
+import com.app.hotels.domain.Cost;
 import com.app.hotels.domain.Hotel;
 import com.app.hotels.domain.criteria.HotelCriteria;
 import com.app.hotels.service.BookingService;
+import com.app.hotels.service.CostService;
 import com.app.hotels.service.HotelService;
+import com.app.hotels.web.dto.CostDto;
 import com.app.hotels.web.dto.HotelDto;
+import com.app.hotels.web.mapper.CostMapper;
 import com.app.hotels.web.mapper.HotelMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,8 @@ public class AdminController {
     private final HotelService hotelService;
     private final HotelMapper hotelMapper;
     private final BookingService bookingService;
+    private final CostService costService;
+    private final CostMapper costMapper;
 
     @DeleteMapping("/hotels/{id}")
     public void delete(@PathVariable Long id) {
@@ -31,12 +37,12 @@ public class AdminController {
 
     @GetMapping("/hotels")
     public String getCreatePage(Model model) {
-        Hotel hotel = new Hotel();
+        HotelDto hotel = new HotelDto();
         model.addAttribute("hotel", hotel);
         return "createHotel";
     }
 
-    @GetMapping("/hotels")
+    @PostMapping("/hotels")
     public String create(@Valid @ModelAttribute("hotel") HotelDto hotel, BindingResult bindingResult,
                          Model model) {
         if (bindingResult.hasErrors()){
@@ -48,10 +54,36 @@ public class AdminController {
         return "redirect:/main";
     }
 
+    @GetMapping("/costs/{id}")
+    public String getCostsPage(Model model, @PathVariable Long id) {
+        List<Cost> costs = costService.findAllByHotelId(id);
+        model.addAttribute("costs", costMapper.toDto(costs));
+        return "costs";
+    }
+
+    @GetMapping("/costs")
+    public String getCreateCostsPage(Model model) {
+        CostDto cost = new CostDto();
+        model.addAttribute("cost", cost);
+        return "createCost";
+    }
+
+    @PostMapping("/costs")
+    public String createCost(@Valid @ModelAttribute("cost") CostDto cost, BindingResult bindingResult,
+                         Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("cost");
+            return "createCost";
+        }
+        Cost costMapped = costMapper.toEntity(cost);
+        costService.create(costMapped);
+        return "redirect:/main";
+    }
+
     @GetMapping("/hotels/{id}")
     public String getUpdatePage(Model model, @PathVariable Long id) {
         Hotel hotel = hotelService.findById(id);
-        model.addAttribute("hotel", hotel);
+        model.addAttribute("hotel", hotelMapper.toDto(hotel));
         return "updateHotel";
     }
 
