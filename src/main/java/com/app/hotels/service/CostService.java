@@ -10,4 +10,6 @@ public interface CostService {
 
     Cost create(Cost cost);
 
+    Cost findById(Long id);
+
 }

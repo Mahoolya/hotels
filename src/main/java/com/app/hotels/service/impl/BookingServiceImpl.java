@@ -1,12 +1,15 @@
 package com.app.hotels.service.impl;
 
 import com.app.hotels.domain.Booking;
+import com.app.hotels.domain.exception.IllegalDateDurationExceprion;
 import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import com.app.hotels.repository.BookingRepository;
 import com.app.hotels.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,11 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking booking) {
+        booking.setConfirmed(false);
+        long dayAmount = Duration.between(booking.getEndDate().atStartOfDay(), booking.getStartDate().atStartOfDay()).toDays();
+        if (dayAmount<=0) throw new IllegalDateDurationExceprion("Выберите верные даты");
+        BigDecimal price = booking.getCost().getPrice().multiply(BigDecimal.valueOf(dayAmount));
+        booking.setPrice(price);
         return bookingRepository.save(booking);
     }
 
@@ -50,6 +58,11 @@ public class BookingServiceImpl implements BookingService {
         Booking bookingExisted = booking.get();
         bookingExisted.setConfirmed(true);
         return bookingRepository.save(bookingExisted);
+    }
+
+    @Override
+    public Booking findById(Long id) {
+        return bookingRepository.findById(id).get();
     }
 
 }
