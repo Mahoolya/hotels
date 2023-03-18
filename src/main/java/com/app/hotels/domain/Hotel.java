@@ -3,6 +3,7 @@ package com.app.hotels.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,12 @@ public class Hotel {
     private String description;
 
     private String image;
+
+    @Column(name = "min_price")
+    private BigDecimal minPrice;
+
+    @Column(name = "max_price")
+    private BigDecimal maxPrice;
 
     @OneToMany(mappedBy = "hotel")
     private Set<Cost> costs = new HashSet<>();
