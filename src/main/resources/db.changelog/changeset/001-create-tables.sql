@@ -28,6 +28,8 @@ create table if not exists hotels
     rooms integer not null,
     description varchar(1000) not null,
     image varchar(200) not null,
+    min_price decimal not null,
+    max_price decimal not null,
 	primary key (id)
 );
 

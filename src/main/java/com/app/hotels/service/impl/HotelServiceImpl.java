@@ -4,6 +4,7 @@ import com.app.hotels.domain.Hotel;
 import com.app.hotels.domain.criteria.HotelCriteria;
 import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import com.app.hotels.repository.HotelRepository;
+import com.app.hotels.service.CostService;
 import com.app.hotels.service.HotelService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class HotelServiceImpl implements HotelService {
     private static final int PAGE_SIZE = 20;
 
     private final HotelRepository hotelRepository;
+    private final CostService costService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -81,7 +84,17 @@ public class HotelServiceImpl implements HotelService {
             predicates.add(starsFinalPredicate);
         }
 
-        //TODO price criteria
+        BigDecimal minPrice = hotelCriteria.getMinPrice();
+        if (minPrice != null) {
+            Predicate minPricePredicate = criteriaBuilder.greaterThanOrEqualTo(hotelRoot.get("maxPrice"), minPrice);
+            predicates.add(minPricePredicate);
+        }
+
+        BigDecimal maxPrice = hotelCriteria.getMaxPrice();
+        if (maxPrice != null) {
+            Predicate maxPricePredicate = criteriaBuilder.lessThanOrEqualTo(hotelRoot.get("minPrice"), maxPrice);
+            predicates.add(maxPricePredicate);
+        }
 
         Predicate finalPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         criteriaQuery.where(finalPredicate);
