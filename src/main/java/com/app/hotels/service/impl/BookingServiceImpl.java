@@ -37,6 +37,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<Booking> findAll() {
+        return bookingRepository.findAll();
+    }
+
+    @Override
     public Booking confirm(Long id) {
         Optional<Booking> booking = bookingRepository.findById(id);
         if (booking.isEmpty()) {
