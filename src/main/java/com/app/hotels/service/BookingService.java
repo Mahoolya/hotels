@@ -14,4 +14,6 @@ public interface BookingService {
 
     List<Booking> findAllByUserId(Long id);
 
+    Booking confirm(Long id);
+
 }
