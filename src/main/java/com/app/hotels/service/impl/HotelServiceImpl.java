@@ -109,7 +109,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public Hotel findById(Long id) {
         return hotelRepository.findById(id)
-                .orElseThrow(() -> new ResourceDoesNotExistException("Hotel with id " + id + " does not exist"));
+                .orElseThrow(() -> new ResourceDoesNotExistException("Отель с id " + id + " не существует"));
     }
 
     @Override
