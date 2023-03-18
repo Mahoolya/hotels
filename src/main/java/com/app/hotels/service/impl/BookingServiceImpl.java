@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking confirm(Long id) {
         Optional<Booking> booking = bookingRepository.findById(id);
         if (booking.isEmpty()) {
-            throw new ResourceDoesNotExistException("There is no booking with id " + id);
+            throw new ResourceDoesNotExistException("Не существует бронирования с id " + id);
         }
         Booking bookingExisted = booking.get();
         bookingExisted.setConfirmed(true);

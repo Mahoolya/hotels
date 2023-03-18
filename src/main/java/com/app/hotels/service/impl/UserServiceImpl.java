@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User create(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ResourceAlreadyExistsException("User with email " + user.getEmail() + " already exists");
+            throw new ResourceAlreadyExistsException("Пользователь с email " + user.getEmail() + " уже существует");
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceDoesNotExistException("There are no user with email " + email));
+                .orElseThrow(() -> new ResourceDoesNotExistException("Не существует пользователя с email " + email));
     }
 
 }
