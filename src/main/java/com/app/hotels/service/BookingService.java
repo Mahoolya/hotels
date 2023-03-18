@@ -18,4 +18,6 @@ public interface BookingService {
 
     Booking confirm(Long id);
 
+    Booking findById(Long id);
+
 }

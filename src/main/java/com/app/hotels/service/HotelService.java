@@ -17,4 +17,10 @@ public interface HotelService {
 
     void delete(Long id);
 
+    List<String> findAllCountries();
+
+    List<String> findAllCities();
+
+    List<Integer> findAllStars();
+
 }

@@ -126,4 +126,20 @@ public class HotelServiceImpl implements HotelService {
     public void delete(Long id) {
         hotelRepository.deleteById(id);
     }
+
+    @Override
+    public List<String> findAllCountries() {
+        return hotelRepository.findAllCountries();
+    }
+
+    @Override
+    public List<String> findAllCities() {
+        return hotelRepository.findAllCities();
+    }
+
+    @Override
+    public List<Integer> findAllStars() {
+        return hotelRepository.findAllStars();
+    }
+
 }
