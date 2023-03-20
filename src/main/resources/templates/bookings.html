@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotels</title>
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="header">
+    <a class="textHeader">HolidayGo!</a>
+</div>
+<div class="listBookings">
+    <span th:if="${#lists.isEmpty(bookings)}">Вы еще ничего не забронировали.</span>
+    <span th:unless="${#lists.isEmpty(bookings)}">
+            <table>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr th:each="booking : ${bookings}" >
+                    <td> <img height="200" th:src="${'/static/img/' + booking.getCost().getHotel().getImage}" class="hotelImage"/> </td>
+                    <td th:text="'От ' + ${booking.startDate}  + ' до ' + ${booking.endDate} + ' ' + ${booking.price} + '$ '" class="nameStars"></td>
+                    <td th:text="${booking.getUser().getName} + ' ' + ${booking.getUser().getSurname()} + ', ' + ${booking.getUser().getEmail()}" class="cityCountry"></td>
+                    <td class="minPrice">
+                        <span th:if="${booking.isConfirmed} == true">Подтверждено</span>
+                        <span th:unless="${booking.isConfirmed} == true">
+                             <form th:action="@{'/api/v1/admin/bookings/manage/'+${booking.id}}" method="post">
+                                <button type="submit" class="moreInf">Подтвердить</button>
+                             </form>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </span>
+
+</div>
+</body>
+</html>

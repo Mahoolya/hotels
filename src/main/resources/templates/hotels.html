@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotels</title>
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="header">
+    <a class="textHeader">HolidayGo!</a>
+</div>
+<div class="allFilters">
+    <form th:action="@{/api/v1/users/hotels/0}" method="get" th:object="${hotelCriteria}">
+        <div class="country">
+            <label>Страна:</label>
+            <ul>
+                <li th:each="country : ${countries}">
+                    <input type="checkbox" th:text="${country}" th:value="${country}" th:field="*{countries}"/>
+                </li>
+            </ul>
+        </div>
+        <div class="city">
+            <label>Город:</label>
+            <ul>
+                <li th:each="city : ${cities}">
+                    <input type="checkbox" th:text="${city}" th:value="${city}" th:field="*{cities}"/>
+                </li>
+            </ul>
+        </div>
+        <div class="stars">
+            <label>Рейтинг(количество звезд):</label>
+            <ul>
+                <li th:each="star : ${stars}">
+                    <input type="checkbox" th:text="${star}" th:value="${star}" th:field="*{stars}"/>
+                </li>
+            </ul>
+        </div>
+        <div class="price">
+            <div>
+                <label>От($/ночь):</label>
+                <a></a>
+                <input type="text" th:field="*{minPrice}" th:value="${minPrice}" placeholder="long" class="textField"/>
+            </div>
+            <div>
+                <label>До($/ночь):</label>
+                <a></a>
+                <input type="text" th:field="*{maxPrice}" th:value="${maxPrice}" placeholder="long" class="textField" />
+            </div>
+        </div>
+        <div class="filterButton">
+            <button type="submit" class="findHotels">Подобрать</button>
+        </div>
+    </form>
+</div>
+<div class="myBookings">
+    <form th:action="@{'/api/v1/users/hotel/bookings/'+${user.id}}" method="get">
+        <button class="moreInf2">Мои бронирования</button>
+    </form>
+</div>
+<div class="listHotels">
+    <span th:if="${#lists.isEmpty(hotels)}">Список отелей пуст.</span>
+    <span th:unless="${#lists.isEmpty(hotels)}">
+            <table>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr th:each="hotel : ${hotels}" >
+                    <td> <img height="200" th:src="${'/static/img/' + hotel.getImage}" class="hotelImage"/> </td>
+                    <td th:text="${hotel.name}  + ', ' + ${hotel.stars} + '★'" class="nameStars"></td>
+                    <td th:text="${hotel.city} + ', ' + ${hotel.country}" class="cityCountry"></td>
+                    <td th:text="'От ' + ${hotel.minPrice} + '$/ночь'" class="minPrice"></td>
+                    <td>
+                        <form th:action="@{'/api/v1/users/hotel/'+${hotel.id}}" method="get">
+                            <button class="moreInf">Подробнее</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </span>
+
+</div>
+</body>
+</html>
