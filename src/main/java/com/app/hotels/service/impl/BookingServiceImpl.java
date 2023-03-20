@@ -1,6 +1,7 @@
 package com.app.hotels.service.impl;
 
 import com.app.hotels.domain.Booking;
+import com.app.hotels.domain.exception.DateNullPointerException;
 import com.app.hotels.domain.exception.IllegalDateDurationException;
 import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import com.app.hotels.repository.BookingRepository;
@@ -21,6 +22,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking create(Booking booking) {
+        if (booking.getEndDate() == null || booking.getStartDate() == null ){
+            throw new DateNullPointerException("Введите дату!");
+        }
         booking.setConfirmed(false);
         long dayAmount = Duration.between(booking.getStartDate().atStartOfDay(), booking.getEndDate().atStartOfDay()).toDays();
         if (dayAmount<=0) throw new IllegalDateDurationException("Выберите верные даты");
