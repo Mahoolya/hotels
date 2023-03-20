@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hotels</title>
+    <link href="/static/css/hotel.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="header">
+    <a class="textHeader">HolidayGo!</a>
+</div>
+<div class="main">
+    <div class="pictures">
+        <td> <img height="200" th:src="${'/static/img/' + hotel.getImage}" class="hotelImage"/> </td>
+    </div>
+    <div class="fullDescription">
+        <div>
+            <td th:text="${hotel.getName()} + ', ' + ${hotel.getStars()} + '★'" class="hotel-name" th:size="40px"></td>
+        </div>
+        <div>
+            <td th:text="${hotel.getCity()} + ', ' + ${hotel.getCountry()}" class="hotel-country"></td>
+        </div>
+        <div>
+            <td th:text="${hotel.getNutritionType()}" class="hotel-nutrition"></td>
+        </div>
+        <div>
+            <td th:text="${hotel.getDescription()}" class="hotel-description"></td>
+        </div>
+        <div>
+            <td th:text="'Количество комнат: '+ ${hotel.getRooms()}" class="hotel-room-number"></td>
+        </div>
+    </div>
+</div>
+<div class="feedbacks">
+    <span th:if="${#lists.isEmpty(feedbacks)}">Никто еще не оставил отзывы о данном отеле!</span>
+    <span th:unless="${#lists.isEmpty(feedbacks)}">
+      <table>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+          <p th:text="'Отзывы: '"></p>
+        <tr th:each="feedback: ${feedbacks}">
+          <p><td th:text="${feedback.getUser().getName()} + ' ' + ${feedback.getUser().getSurname()} + ', ' + ${feedback.getStars()} + '★' + ' - ' + ${feedback.getText()}"></td></p>
+        </tr>
+      </table>
+    </span>
+</div>
+<div>
+    <form th:action="@{${hotel.id} + '/feedbacks'}" method="get">
+        <button class="simple-button">Оставить отзыв</button>
+    </form>
+</div>
+<div>
+    <form th:action="@{${hotel.id} + '/booking'}" method="get">
+        <button class="simple-button">Забронировать</button>
+    </form>
+</div>
+</body>
+</html>
