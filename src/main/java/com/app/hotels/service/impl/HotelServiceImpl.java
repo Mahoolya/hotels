@@ -32,14 +32,17 @@ public class HotelServiceImpl implements HotelService {
     public List<Hotel> findAll(HotelCriteria hotelCriteria, int currentPage) {
         List<Hotel> hotels;
         if(currentPage == 0){
-            currentPage = 1;
+            currentPage = 0;
         }
-        if(hotelCriteria !=null){
+        if(hotelCriteria.getCities() != null || hotelCriteria.getStars() != null || hotelCriteria.getMinPrice() != null ||
+        hotelCriteria.getMaxPrice() != null || hotelCriteria.getCountries() != null) {
             hotels = findAllByCriteria(hotelCriteria, currentPage);
         } else {
             CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
             CriteriaQuery<Hotel> criteriaQuery = criteriaBuilder.createQuery(Hotel.class);
             Root<Hotel> hotelRoot = criteriaQuery.from(Hotel.class);
+            Order hotelOrder = criteriaBuilder.asc(hotelRoot.get("id"));
+            criteriaQuery.orderBy(hotelOrder);
             Pageable pageable = PageRequest.of(currentPage, PAGE_SIZE);
             hotels = entityManager.createQuery(criteriaQuery)
                     .setFirstResult((int) pageable.getOffset())

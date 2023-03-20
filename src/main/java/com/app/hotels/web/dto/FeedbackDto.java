@@ -18,7 +18,7 @@ public class FeedbackDto {
     private User user;
 
     @NotNull(message = "Описание обязательно")
-    @Length(min = 50, max = 1000, message = "Описание должно находиться в пределах от 50 до 1000 символов")
+    @Length(min = 10, max = 1000, message = "Описание должно находиться в пределах от 10 до 1000 символов")
     private String text;
 
     @Min(value = 1, message = "Минимальное количество звезд 1")

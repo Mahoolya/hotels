@@ -13,13 +13,14 @@ import com.app.hotels.web.mapper.CostMapper;
 import com.app.hotels.web.mapper.HotelMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -113,10 +114,10 @@ public class AdminController {
         return "bookings";
     }
 
-    @PutMapping("/bookings/{id}")
+    @PostMapping("/bookings/manage/{id}")
     public String confirmBooking(Model model, @PathVariable Long id) {
         bookingService.confirm(id);
-        return "redirect:/bookings";
+        return "redirect:/api/v1/admin/bookings";
     }
 
 }

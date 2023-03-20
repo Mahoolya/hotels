@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Data
 public class UserDto {
 
-    @NotNull(message = "Id обязателен")
     private Long id;
 
     private User.Role role;

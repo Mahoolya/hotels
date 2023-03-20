@@ -9,6 +9,7 @@ import com.app.hotels.web.dto.UserDto;
 import com.app.hotels.web.mapper.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -48,17 +49,18 @@ public class UserController {
     }
 
     @PostMapping(value = "/registration")
-    public String registration(@Valid @ModelAttribute("user") UserDto user, BindingResult bindingResult)  {
+    public String registration(@Valid @ModelAttribute("user") UserDto user, BindingResult bindingResult, Model model)  {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("user", new UserDto());
             return "registration";
         }
         User userMapped = userMapper.toEntity(user);
         userService.create(userMapped);
-        return "redirect:/login";
+        return "redirect:/api/v1/users/login";
     }
 
     @GetMapping("/hotels/{currentPage}")
-    public String getHotelsPage(Model model, @PathVariable(required = false) int currentPage, @ModelAttribute("hotelCriteria") HotelCriteria hotelCriteria) {
+    public String getHotelsPage(Model model, @PathVariable(required = false) int currentPage, @ModelAttribute("hotelCriteria") HotelCriteria hotelCriteria, Principal principal) {
         List<Hotel> hotels = hotelService.findAll(hotelCriteria, currentPage);
         model.addAttribute("hotels", hotelMapper.toDto(hotels));
         List<String> cities = hotelService.findAllCities();
@@ -69,10 +71,12 @@ public class UserController {
         model.addAttribute("stars", stars);
         model.addAttribute("minCost", 0);
         model.addAttribute("maxCost", 1000);
-        return "registration";
+        User user = userService.findByEmail(principal.getName());
+        model.addAttribute("user", user);
+        return "hotels";
     }
 
-    @GetMapping("/hotels/{id}")
+    @GetMapping("/hotel/{id}")
     public String getHotel(Model model, @PathVariable("id") Long id){
         Hotel hotel = hotelService.findById(id);
         model.addAttribute("hotel", hotelMapper.toDto(hotel));
@@ -81,43 +85,45 @@ public class UserController {
         return "hotel";
     }
 
-    @GetMapping("/hotels/{id}/booking")
+    @GetMapping("/hotel/{id}/booking")
     public String getBookingPage(Model model, @PathVariable("id") Long id){
         Hotel hotel = hotelService.findById(id);
         model.addAttribute("hotel", hotelMapper.toDto(hotel));
         List<Cost> costs = costService.findAllByHotelId(id);
-        model.addAttribute("costs", costMapper.toDto(costs));
+        model.addAttribute("costs", costs);
         Booking booking = new Booking();
-        model.addAttribute("booking", bookingMapper.toDto(booking));
+        model.addAttribute("booking", booking);
         return "createBooking";
     }
 
-    @PostMapping("/hotels/booking/{id}")
-    public String createBooking(@Valid @ModelAttribute("booking") BookingDto booking, BindingResult bindingResult,
-                                Model model, @PathVariable Long id, Principal principal) {
+    @PostMapping("/hotel/{hotel}/{hotelId}/booking")
+    public String createBooking(@Valid @ModelAttribute("booking") Booking booking, BindingResult bindingResult,
+                                Model model, @PathVariable(name = "hotelId") Long hotelId, Principal principal) {
         if (bindingResult.hasErrors()){
+            Hotel hotel = hotelService.findById(hotelId);
+            model.addAttribute("hotel", hotelMapper.toDto(hotel));
+            List<Cost> costs = hotel.getCosts();
+            model.addAttribute("costs", costMapper.toDto(costs));
             model.addAttribute("booking");
             return "createBooking";
         }
-        Booking bookingMapped = bookingMapper.toEntity(booking);
         User user = userService.findByEmail(principal.getName());
-        bookingMapped.setUser(user);
-        bookingMapped.setCost(costService.findById(id));
-        bookingService.create(bookingMapped);
-        return "redirect:/hotels";
+        booking.setUser(user);
+        bookingService.create(booking);
+        return "redirect:/api/v1/users/hotels/0";
     }
 
-    @GetMapping("/hotels/bookings/{id}")
-    public String getMyBookingPage(Model model, @PathVariable("id") Long id){
-        List<Booking> bookings = bookingService.findAllByUserId(id);
-        model.addAttribute("bookings", bookingMapper.toDto(bookings));
+    @GetMapping("/hotel/bookings/{userId}")
+    public String getMyBookingPage(Model model, @PathVariable("userId") Long userId){
+        List<Booking> bookings = bookingService.findAllByUserId(userId);
+        model.addAttribute("bookings", bookings);
         return "myBookings";
     }
 
-    @DeleteMapping("/hotels/bookings/{id}")
-    public String deleteBooking(Model model, @PathVariable("id") Long id){
-        bookingService.delete(id);
-        return "redirect:/myBookings";
+    @PostMapping("/hotel/bookings/{bookingId}")
+    public String deleteBooking(Model model, @PathVariable("bookingId") Long bookingId){
+        bookingService.delete(bookingId);
+        return "hotels";
     }
 
     @GetMapping("/hotels/bookings/update/{id}")
@@ -139,24 +145,34 @@ public class UserController {
         return "redirect:/myBookings";
     }
 
-    @GetMapping("/hotels/{id}/feedbacks")
-    public String getFeedbackCreatePage(Model model, @PathVariable("id") Long id){
-        Hotel hotel = hotelService.findById(id);
+    @GetMapping("/hotel/{hotelId}/feedbacks")
+    public String getFeedbackCreatePage(Model model, @PathVariable("hotelId") Long hotelId){
+        Hotel hotel = hotelService.findById(hotelId);
         model.addAttribute("hotel", hotelMapper.toDto(hotel));
-        Feedback feedback = new Feedback();
-        model.addAttribute("feedback", feedbackMapper.toDto(feedback));
+        FeedbackDto feedback = new FeedbackDto();
+        model.addAttribute("feedback", feedback);
         return "createFeedback";
     }
 
-    @PostMapping("/hotels/{id}/feedbacks")
-    public String createFeedback(Model model, @PathVariable("id") Long id, @Valid @ModelAttribute("feedback") FeedbackDto feedback,
-                                 Principal principal){
-        Hotel hotel = hotelService.findById(id);
+    @PostMapping("/hotel/{hotel}/{hotelId}/feedbacks")
+    public String createFeedback(@Valid @ModelAttribute("feedback") FeedbackDto feedback, BindingResult bindingResult,
+                                 @PathVariable("hotelId") Long hotelId, Principal principal, Model model){
+        if (bindingResult.hasErrors()) {
+            Hotel hotel = hotelService.findById(hotelId);
+            User user = userService.findByEmail(principal.getName());
+            feedback.setUser(user);
+            feedback.setHotel(hotel);
+            model.addAttribute("hotel", hotel);
+            model.addAttribute("feedback", feedback);
+            return "createFeedback";
+        }
+        Feedback feedbackMapped = feedbackMapper.toEntity(feedback);
+        Hotel hotel = hotelService.findById(hotelId);
         User user = userService.findByEmail(principal.getName());
-        feedback.setUser(user);
-        feedback.setHotel(hotel);
-        feedbackService.create(feedbackMapper.toEntity(feedback));
-        return "redirect:/hotels";
+        feedbackMapped.setUser(user);
+        feedbackMapped.setHotel(hotel);
+        feedbackService.create(feedbackMapped);
+        return "redirect:/api/v1/users/hotels/0";
     }
 
 }
