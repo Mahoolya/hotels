@@ -1,7 +1,9 @@
 package com.app.hotels.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "bookings")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
 
     @Id
