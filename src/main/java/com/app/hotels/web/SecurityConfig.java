@@ -1,15 +1,20 @@
 package com.app.hotels.web;
 
+import com.app.hotels.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfig {
+@EnableWebSecurity
+public class SecurityConfig extends GlobalAuthenticationConfigurerAdapter {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -17,36 +22,42 @@ public class SecurityConfig {
     }
 
     @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserServiceImpl();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(((request, response, authException) -> {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("Unauthorized");
-                }))
-                .accessDeniedHandler((request, response, exception) -> {
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    response.getWriter().write("Access is denied");
-                })
-                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/users/login","/api/v1/users/registration").permitAll()
+                .requestMatchers("/api/v1/users/login","/api/v1/users/registration", "/registration").permitAll()
                 .requestMatchers("/api/v1/users/**").hasRole("USER")
                 .requestMatchers("/api/v1/**").hasRole("ADMIN")
                 .anyRequest().permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login.html")
-                .loginProcessingUrl("/api/v1/users/login")
-                .defaultSuccessUrl("/api/v1/users/hotels", true)
+                .usernameParameter("email")
+                .loginPage("/api/v1/users/login")
+                .defaultSuccessUrl("/api/v1/users/hotels/0", true)
                 .and()
                 .logout()
-                .logoutUrl("/api/v1/users/login")
+                .permitAll()
+                .logoutSuccessUrl("/api/v1/users/login")
                 .and()
                 .build();
     }

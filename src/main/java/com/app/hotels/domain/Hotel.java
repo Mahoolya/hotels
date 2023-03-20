@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "hotels")
 @Data
 public class Hotel {
 
@@ -40,9 +40,9 @@ public class Hotel {
     private BigDecimal maxPrice;
 
     @OneToMany(mappedBy = "hotel")
-    private Set<Cost> costs = new HashSet<>();
+    private List<Cost> costs = new ArrayList<>();
 
     @OneToMany(mappedBy = "hotel")
-    private Set<Feedback> feedbacks = new HashSet<>();
+    private List<Feedback> feedbacks = new ArrayList<>();
 
 }

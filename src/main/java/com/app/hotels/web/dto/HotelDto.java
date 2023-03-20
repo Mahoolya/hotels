@@ -1,10 +1,13 @@
 package com.app.hotels.web.dto;
 
+import com.app.hotels.domain.Cost;
+import com.app.hotels.domain.Feedback;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class HotelDto {
@@ -54,5 +57,9 @@ public class HotelDto {
     @Digits(integer = 3, fraction = 2, message = "Пример - 100.00")
     @NotNull(message = "Максимальная цена обязательна")
     private BigDecimal maxPrice;
+
+    private List<Feedback> feedbacks;
+
+    private List<Cost> costs;
 
 }

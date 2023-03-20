@@ -3,15 +3,15 @@ package com.app.hotels.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,40 @@ public class User {
     private LocalDate birthday;
 
     @OneToMany(mappedBy = "user")
-    private Set<Booking> bookings = new HashSet<>();
+    private List<Booking> bookings = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private Set<Feedback> feedbacks = new HashSet<>();
+    private List<Feedback> feedbacks = new ArrayList<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(role);
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     public enum Role implements GrantedAuthority {
 

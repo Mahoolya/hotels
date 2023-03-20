@@ -1,5 +1,5 @@
 spring:
-  port: 8090
+  port: 8080
   config:
     import: optional:file:.env[.properties]
   datasource:

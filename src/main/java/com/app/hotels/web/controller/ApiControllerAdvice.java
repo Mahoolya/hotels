@@ -1,5 +1,6 @@
 package com.app.hotels.web.controller;
 
+import com.app.hotels.domain.exception.IllegalDateDurationException;
 import com.app.hotels.domain.exception.ResourceAlreadyExistsException;
 import com.app.hotels.domain.exception.ResourceDoesNotExistException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,4 +24,11 @@ public class ApiControllerAdvice {
     public String handleResourceDoesNotExistException(ResourceDoesNotExistException ex) {
         return "hotels";
     }
+
+    @ExceptionHandler(IllegalDateDurationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleIllegalDateDurationException(IllegalDateDurationException ex) {
+        return "Даты выбраны неверно!";
+    }
+
 }

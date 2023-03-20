@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "costs")
@@ -26,6 +26,6 @@ public class Cost {
     private BigDecimal price;
 
     @OneToMany(mappedBy = "cost")
-    private Set<Booking> bookings = new HashSet<>();
+    private List<Booking> bookings = new ArrayList<>();
 
 }
