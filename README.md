@@ -14,4 +14,5 @@ docker-compose up
 
 Then the application will be started.
 
+Hotels 
 [GitHub page](https://github.com/Mahoolya/hotels)
