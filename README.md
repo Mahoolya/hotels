@@ -24,6 +24,6 @@ The client registers via email with a password input.  Then he can book the hote
 
 ### Functionality on the administrator side:
 
-The administrator can log in using a specific URL. He can add or remove hotels from the client's page. The administrator also confirms client bookings upon request.
+The administrator can log in using a specific URL. He can add or remove hotels from the client's page. The administrator confirms client bookings upon request.
 
 [GitHub page](https://github.com/Mahoolya/hotels)
