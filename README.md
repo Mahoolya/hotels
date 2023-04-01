@@ -20,7 +20,7 @@ At the moment, the client and administrator parts have been implemented in the p
 
 ### Functionality on the client side:
 
-The client registers via email with a password input.  Then he can book the hotel room with preferred criteria and desired dates (with dates validation) on the calendar. After selecting the necessary criteria, hotels are sorted according to the request and displayed based on the corresponding criteria. The client selects a hotel and makes a reservation, waiting for confirmation by the administrator.
+The client registers via email with a password input.  Then he can book the hotel room with preferred criteria and desired dates (with dates validation) on the calendar. After selecting the necessary criteria, hotels are sorted according to the request and displayed based on the corresponding criteria. The client selects a hotel and makes a reservation, waiting for confirmation by the administrator. The client can leave a review.
 
 ### Functionality on the administrator side:
 
